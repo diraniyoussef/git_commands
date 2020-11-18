@@ -1,0 +1,190 @@
+git --version
+
+git config --global user.name "Youssef Dirani"
+git config --global user.email "diraniyoussef@gmail.com"
+git config --list
+git config --global --list
+
+
+git config --help
+git help config
+
+git init
+
+ls -la
+
+git status
+
+git log 
+git log --stat # this shows the 
+
+touch .gitignore
+
+git add filename
+gid add # same as (the default behavior as the following)
+git add --all # same as 
+git add -A # everything is staged. Absolutely everything. Everything in the working directory, even if I called this in a subdirectory.
+
+git add -A a_subdirectory/ # this stages everything in the specified subdirectory
+
+git add --no-all -A # --no-all doesn't stage deleted files; thus even if it's been deleted, it will remain being added in the staging area if it was beforehand.  Same as :
+git add --ignore-removal -A
+git add --no-all a_subdirectory/ # this stages everything modified or untracked (which are new) in the specified subdirectory, but not deleted. It's like this --no-all likes to commit (when the commit time happens) as much as possible what's added and doesn't like to delete what's now already committed.
+
+git add --update # same as 
+git add -u # this adds all modified and deleted files but not any untracked files (which are new)
+git add -u a_subdirectory/ # this stages everything modified or deleted in the specified subdirectory. It's like this -u likes to keep files (in the next commit, when it happens) only to the reasonable minimum, i.e. delete files (in the next commit), and does not add untracked files.
+
+git add . # it adds everything in the current directory (but not necessarily in the working directory), that is if you were in a subdirectory then it will add everything inside this subdirectory and below.
+
+git add * # not recommended, because it won't see the deleted files in the current directory or the hidden files (* is a shell command) and this might be an unexpected result.
+
+git reset filename (remove file from being staged)
+git reset (removes everything staged back to its previous state - modified or untracked)
+
+
+
+git commit -m "my awsome commit"
+git log
+
+# don't do git init
+git clone <url to the git file or folder containing the git file and other files> <to which folder to clone the remote repo. It may be the period . e.g. the current directory>
+# it's nice how after clone, the remote repo is named origin 
+git remote -v
+git branch -a #this lists all the branches, locally and remotely.
+git branch --merged #this tells us the branches we've merged in so far.
+
+#after a change is made in the local repo
+git diff
+git status
+git add -A
+git commit -m "modified multiply"
+
+#to push to the remote repo
+git pull remote_repo_name_which_is_origin remote_repo_branch  
+git push remote_repo_name_which_is_origin remote_repo_branch
+git push -u remote_repo_name_which_is_origin remote_repo_branch #this associates the remote branche with the local branch, so I can then simply type
+git pull #and
+git push
+
+#to rename a remote repo
+git remote rename old_name new_name_e.g._origin
+
+#to create a new branch, e.g. a backup one
+git branch backup_master_branch
+
+#to delete a local branch
+git branch -d local_branch_name
+
+#to delete a remote branch
+git branch remote_repo_name_which_is_origin --delete remote_branch_name
+
+#to move to another branch
+git checkout new_branch_name
+
+#If you want to compare 2 branches :
+git diff branch1 branch2
+
+#You may compare 2 commits within the same branch
+git diff commit1 commit2
+
+#to merge from a local branch to the master local branch e.g., you switch to master then :
+git merge other_local_branch
+#then you can check the files that might be in conflict using :
+git diff
+#then you can open any editor and fix the errors, then after fixing, either add or rm --cached those conflicted files, then commit.
+
+#To undo a particular file's changes (before it has been committed after the change), simply
+git checkout particular_file_name #this will return with the particular file to its state in the last commit before the change.
+
+#To make something similar for all the files
+git checkout -- . # I guess git checkout . is enough as well, but -- is for something more advanced (https://git-scm.com/docs/git-checkout search for --ignore-skip-worktree-bits )
+
+git commit --amend -m "the new correct message" # to change the message of the last commit. Note that the hash of the new amended commit is different than the hash of the commit before amending it. And that is logical if you think of it, since the hash probably relies on the message as well.
+
+#How to add a file to the last commit ?
+git add the_file_name
+git commit --amend # this will open an interactive editor (in which you may change the editor if you like). Then just save the editor and close it. (you may probably do this using "wq"). And of course the hash of the commit will change, e.g. if you did git log, you will notice that.
+
+#How to copy/paste a commit from branch1 to branch2 ? The answer is cherrypick as the following :
+# in branch1, do 
+git log
+# then copy the hash_of_the_commit you want to copy, then 
+git checkout branch2
+#then 
+git cherry-pick hash_of_the_commit # and that's it. Note that the hash is not the same.
+
+#How to delete the last commit on a certain branch ? We do this using a git reset, as the following :
+# we copy the hash_of_the_before_last_commit of the before last one, then 
+git reset --soft hash_of_the_before_last_commit # a soft reset will keep the changes we've made after the before_last commit, so we won't lose our work, in a way that if you decided to commit right now, you will get back where you were, because everything is staged (in the staging area.)
+# or you might do 
+git reset hash_of_the_before_last_commit # this is a --mixed reset (the default reset type); we won't lose our work (changes will just be not staged though. Changes will include files that were either tracked or untracked after the before last commit).
+# or you might do 
+git reset --hard hash_of_the_before_last_commit # this will lose our work (of the tracked files, I guess) after that commit. So be careful when using it. Notice that the kept files are just the ones that were untracked after the before last commit.
+
+#To remove (delete) untracked files
+git clean -df #d to remove the untracked directories, and f to remove untracked files.
+
+#To undo a hard reset, that is to get the changes that were deleted of the staged files
+git reflog # (a log of everything has been made) shows the commits in the order you referenced them, then you may 
+git checkout hash_of_the_commit_before_hard_reset # now we're in the detached head state. BTW this will be garbage collected at some point in the future
+#To get out of the detached head state, one trick is to make a branch from it, e.g.
+git branch backup_branch
+#now you may checkout the master branch and merge the backup branch (or whatever you want to do)
+
+#If you want to undo the changes made in a commit without deleting it (i.e. without messing around with the commit history - this is especially useful when others might have pulled that commit), that is make a new commit on top of existing one reflecting a change back, use
+git revert hash_of_the_commit_to_be_undone # this opens an interactive editor
+# BTW in git reset, we use to use the hash_of_the_before_last_commit; here it's different
+
+#End of https://www.youtube.com/watch?v=FdZecVxzJbk
+
+#Start of https://www.youtube.com/watch?v=KLEDKgMmbBI
+git stash save "info_message" # I believe the difference between this command and "git checkout ." is that stash saves them, but checkout loses them.
+
+git stash list #shows all the stashes. E.g. stash@{0}, ...
+
+#To get back the changes in a particular stash
+git stash apply stash@{0} # this does not delete the stash though, this can be seen if you call again git stash list 
+
+#To get the first stash (stash@{0}) and delete it from the stash list
+git stash pop
+
+#To simply delete a certain stash, stash@{2} e.g.
+git stash drop stash@{2}
+
+#To delete all the stashes
+git stash clear
+
+
+
+
+When I was pulling from a remote repo, it complained for some reason, so 
+https://stackoverflow.com/questions/936249/how-to-stop-tracking-and-ignore-changes-to-a-file-in-git as the following :
+git update-index --skip-worktree the_file_name   #it won't work if it's a directory, but the trick can be folder_name/*
+#but that won't do. The following works : https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files
+git reset --hard origin/master #this is to force pull and overrite your files
+#But remember to backup before by branching ! Although there wasn't really a need to. In fact then I pushed and all worked well.
+
+
+*If you want to delete a series of commits starting from a certain commit in the past : 
+1) go back to that previous commit using 		reset --soft ......
+2) now the head is detached. Make a new branch.
+3) delete the old branch which contains the series of bad commits to delete.
+4) you can rename the new branch to the old one if you like.
+*If you are still can "amend" the last commit, do it. It's easy, then you may force push to the remote.
+
+
+Start of https://www.youtube.com/watch?v=0SJCYPsef54&t
+
+
+
+
+
+
+
+
+
+
+
+
+
