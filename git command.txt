@@ -81,6 +81,8 @@ git branch remote_repo_name_which_is_origin --delete remote_branch_name
 
 #to move to another branch
 git checkout new_branch_name
+# you may also use 
+git checkout - # https://www.youtube.com/watch?v=0SJCYPsef54&t
 
 #If you want to compare 2 branches :
 git diff branch1 branch2
@@ -131,6 +133,7 @@ git checkout hash_of_the_commit_before_hard_reset # now we're in the detached he
 #To get out of the detached head state, one trick is to make a branch from it, e.g.
 git branch backup_branch
 #now you may checkout the master branch and merge the backup branch (or whatever you want to do)
+#or I guess to get out of the detached head state, simply checkout to the master branch.
 
 #If you want to undo the changes made in a commit without deleting it (i.e. without messing around with the commit history - this is especially useful when others might have pulled that commit), that is make a new commit on top of existing one reflecting a change back, use
 git revert hash_of_the_commit_to_be_undone # this opens an interactive editor
@@ -155,33 +158,39 @@ git stash drop stash@{2}
 #To delete all the stashes
 git stash clear
 
+#Rebase in https://www.youtube.com/watch?v=0SJCYPsef54&t
+git rebase -i other-branch # you are in branch master and you want to rebase. (-i for interactive.) This will insert the work of the other branch onto the master branch, where the branching took place once. Note that his branch won't be affected. However the late commit hash of the master branch will change. This is the downside. Phylosophy behind it : Having his work, in detail (because we get his commits), onto mine. Or put otherwise, basing my work on top of his, while his branch not being affected.
 
+#To undo a rebase, you may use git reset, after using git reflog.
 
-
-When I was pulling from a remote repo, it complained for some reason, so 
+#When I was pulling from a remote repo, it complained for some reason, so 
 https://stackoverflow.com/questions/936249/how-to-stop-tracking-and-ignore-changes-to-a-file-in-git as the following :
 git update-index --skip-worktree the_file_name   #it won't work if it's a directory, but the trick can be folder_name/*
-#but that won't do. The following works : https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files
+# but that won't do. The following works : https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files
 git reset --hard origin/master #this is to force pull and overrite your files
-#But remember to backup before by branching ! Although there wasn't really a need to. In fact then I pushed and all worked well.
+# but remember to backup before by branching ! Although there wasn't really a need to. In fact then I pushed and all worked well.
 
 
-*If you want to delete a series of commits starting from a certain commit in the past : 
+#If you want to delete a series of commits starting from a certain commit in the past : 
 1) go back to that previous commit using 		reset --soft ......
 2) now the head is detached. Make a new branch.
 3) delete the old branch which contains the series of bad commits to delete.
-4) you can rename the new branch to the old one if you like.
-*If you are still can "amend" the last commit, do it. It's easy, then you may force push to the remote.
-
-
-Start of https://www.youtube.com/watch?v=0SJCYPsef54&t
-
+4) you can rename the new branch to the old one if you like, like this :
+git branch -m <oldname> <newname>
+# If you are still can "amend" the last commit, do it. It's easy, then you may force push to the remote.
 
 
 
 
 
 
+
+
+#To upload to Github for the first time, go ahead to Github website and create a repo there, then 
+git remote add origin https://github.com/diraniyoussef/git_commands.git
+# then you may
+git push -u origin master
+# and that's it.
 
 
 
